@@ -7,15 +7,24 @@
 //
 
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { (grated, error) in
+            if grated {
+                print("Allowed")
+            } else {
+                print("Did not allowed")
+            }
+        }
         return true
     }
 
@@ -41,6 +50,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let identifier = response.actionIdentifier
+        switch identifier {
+        case NotificationActionID.ok.rawValue:
+            print("okAction")
+        case NotificationActionID.cancel.rawValue:
+            print("cancelAction")
+        default:
+            print("noAction")
+        }
+        completionHandler()
+    }
 
 }
 
